@@ -1,0 +1,150 @@
+##### Principales of Analytic Graphics#####
+
+#1 Show comparisons
+#2 Casuality, mechanisim, explanation (how works)
+#3 Multivariate
+#4 Integration of evidence
+#5 Describe and document the evidence with aprropiate labelsa, scales, soruces, etc.
+#6 Content is king
+
+##### Exploratory Graphs #####
+
+#Simple Summaries of Data:
+    #Five number summary: Min, 1Q, Median, 2Q, 3Q, Max
+    #Boxplot
+    #Histogram
+    #Overlaying features (i.e. put median line in histogram)
+    #Bar plot (for categorical data)
+
+    #Multiple boxplots (dividing the categorical)
+    #Multiple histograms (dividing the categorical)
+    #Add abline to a scatter plot (i.e. like the mean, also color the plots for the categorical,
+
+        #or 2 plots)
+##### Plotting System #####
+
+#Base Plotting system
+    #Add things one by one
+    #Start with a plot function or similar
+    #Can't go back once plot has started
+    library(datasets)
+    data(cars)
+    with(cars, plot(speed, dist))
+    
+#Lattice System
+    #lattice pieces
+    #Rather than by on by, every plot is constructed with a single function (xyplot, vwplot, etc).
+    #Margins, spacing are sett automatically
+    #Awkward to specify the entire plot
+    #Can't add anything to the plot once created
+    library(lattice)
+    state <- data.frame(state.x77, region = state.region)
+    xyplot(Life.Exp ~ Income | region, data = state, layout=c(4,1))
+    
+#ggplot2 system
+    #grammar of graphics
+    #automatically deals with spacing, text, titles, but also you can add
+    #More intuitive to use
+    #default mode makes many choices for you, but still you can customize
+    library(ggplot2)
+    data(mpg)
+    qplot(displ, hwy, data= mpg)
+
+#Can't mix the functions with in two system
+    
+    
+    
+###### Plotting system #####
+
+#Simple Base Graphics: Boxplot 
+    #?par
+    library(datasets)
+    airquality <- transform(airquality, Month = factor(Month))
+    boxplot(Ozone ~ Month, airquality, xlab="Month", ylab= "Ozone (ppb)")
+    
+    with(airquality, plot(Wind, Ozone))
+    title(main= "Ozone and Wind in NYC")    
+    
+    with(airquality, plot(Wind, Ozone, main = "Ozone and Wind in NYC"))
+    with(subset(airquality, Month == 5), points(Wind, Ozone, col="blue"))
+    
+    with(airquality, plot(Wind, Ozone, main = "Ozone and Wind in NYC", type = "n"))
+    with(subset(airquality, Month == 5), points(Wind, Ozone, col="blue"))
+    with(subset(airquality, Month != 5), points(Wind, Ozone, col="red"))
+    legend("topright", pch = 1, col=c("blue", "red"), legend = c("May", "Other Months"))
+    
+    
+    with(airquality, plot(Wind, Ozone, main="Ozone and Wind in NYC", pch = 20))
+    model <- lm(Ozone ~ Wind, airquality)
+    abline(model, lwd=3)
+    
+    #Multiple base plots
+    par(mfrow=c(1,2)) #1 one and 2 columns
+    with(airquality, {
+        plot(Wind, Ozone, main="Ozone and Wind")
+        plot(Solar.R, Ozone, main = "Ozone and Solar Radiation")
+    })
+    
+    par(mfrow=c(1,3), mar=c(4,4,2,1), oma=c(0,0,2,0)) #margins and outer margins
+    with(airquality,{
+        plot(Wind, Ozone, main="Ozone and Wind")
+        plot(Solar.R, Ozone, main = "Ozone and Solar Radiation")
+        plot(Temp, Ozone, main= "Ozone and Temperature")
+        mtext("Ozone and Weather in NYC", outer = TRUE)
+        
+    })
+    
+    
+##### Demostrations #####
+    x <- rnorm(100)
+    hist(x)
+    y<- rnorm(100)
+    plot(x,y)
+    par(mar=c(2,2,2,2))
+    plot(x,y, pch=1)
+    #for color, use arguments bg (background of shape) and col (color of margin shape)
+    title("Scatterplot")
+    legend("topleft", legend = "Data")
+    legend("topleft", legend = "Data", pch = 20)
+    
+    fit <- lm(x~y)
+    abline(fit)    
+    abline(fit, lwd=3, col="blue")    
+    plot(x, y, xlab = "Weight", ylab="Height", main = "Scatterplot", pch=20) 
+    abline( lm(y~x), lwd=3, col="red")
+  
+    x<- rnorm(100)
+    y<- x + rnorm(100)
+    g <- gl(2,50, labels = c("Male", "Female"))
+    plot(x,y, type="n")
+    points(x[g=="Male"], y[g=="Male"], col = "green")#plot when gender equal yo Male
+    points(x[g=="Female"], y[g=="Female"], col = "blue", pch=19)
+    
+##### Graphics Devices #####
+#Graphics device is something where you can make a plot appear:
+    #Window computer
+    #PDF file
+    #PNG or KPEG file
+    #VSG file (scalable vector graphics)
+    
+    #screen device is the most common place (windows())
+    #?Devices
+    #Use dev.cur() so know the currentky active graphics
+    #dev.set(<integer>), so swith so the integer graphic device
+    
+    #for files, use dev.off() so close the graphics device
+    #pdf
+    #svg
+    #win.metafile
+    #postscript
+    
+    #dev.copy: copy a plot from one device to another
+    #dev.copy2pdf: specificallly copy a plot to a PDF file
+    
+    library(datasets)
+    with(faithful, plot(eruptions, waiting))
+    dev.copy(png, file="geyserplot.png") #Copy my plot to a PNG file
+    dev.off() #close the PNG device
+    
+    
+    
